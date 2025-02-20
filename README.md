@@ -6,15 +6,18 @@
 
 ### ClickHouse
 1. Install [ClickHouse](https://clickhouse.com/docs/en/getting-started/quick-start) locally
-2. Start the ClickHouse server: `./clickhouse server`
+2. Start the ClickHouse server: 
+    ```
+    ./clickhouse server
+    ```
 3. Use the ClickHouse client to create database and apply schema:
-```
-./clickhouse client --host=127.0.0.1 --port=9000 --database=erc20_tokens_v1 < schema.sql
-```
+    ```
+   ./clickhouse client --host=127.0.0.1 --port=9000 --database=erc20_tokens_v1 < schema.sql
+    ```
 4. Set the `CLICKHOUSE_URL` environment variable:
-```
-export CLICKHOUSE_URL="clickhouse://default:@127.0.0.1:9000/erc20_tokens_v1"
-```
+    ```
+    export CLICKHOUSE_URL="clickhouse://default:@127.0.0.1:9000/erc20_tokens_v1"
+    ```
 
 ### `substreams-sink-sql`
 - Link to repo: https://github.com/streamingfast/substreams-sink-sql
@@ -24,69 +27,84 @@ Ensure you have `Rust`, `Cargo` and `protobuf` installed:
 1. `brew install protobuf`
 2. `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
 3. Verify installation:
-```
-protoc --version  # Should return a valid version
-rustc --version   # Should return Rust version
-cargo --version   # Should return Cargo version
-```
+    ```
+    protoc --version  # Should return a valid version
+    rustc --version   # Should return Rust version
+    cargo --version   # Should return Cargo version
+    ```
 4. Clone repo
-```
-git clone https://github.com/streamingfast/substreams-sink-sql.git
-cd substreams-sink-sql
-cargo build --release
-cp target/release/substreams-sink-sql ~/.cargo/bin/
-substreams-sink-sql --help # Should be able to run this from anywhere
-```
+    ```
+    git clone https://github.com/streamingfast/substreams-sink-sql.git
+
+    cd substreams-sink-sql
+
+    cargo build --release
+
+    cp target/release/substreams-sink-sql ~/.cargo/bin/
+
+    substreams-sink-sql --help # Should be able to run this from anywhere
+    ```
 If this doesn't work and you need to use the pre-built binary instead of building it from source, do the following:
 - Download the latest release for your system from https://github.com/streamingfast/substreams-sink-sql/releases
-- `tar -xvzf substreams-sink-sql-linux-amd64.tar.gz` # Adjust filename for your OS
-- `sudo mv substreams-sink-sql ~/.local/bin`
-- `chmod +x ~/.local/bin/substreams-sink-sql`
-- `export PATH="$HOME/.local/bin:$PATH"` # If not already on your `PATH`
-- Verify the installation with `substreams-sink-sql --help`
+    ```
+    tar -xvzf substreams-sink-sql-linux-amd64.tar.g` # Adjust filename for your OS
+
+    sudo mv substreams-sink-sql ~/.local/bin
+
+    chmod +x ~/.local/bin/substreams-sink-sql
+
+    export PATH="$HOME/.local/bin:$PATH"` # If not already on your `PATH
+    ```
+- Verify the installation with 
+    ```
+    substreams-sink-sql --help
+    ```
+
 
 ### StreamingFast Substream API Key
 1. Signup for a StreamingFast API key from https://thegraph.market/
 2. Export your API key as an environment variable
-```
-export SUBSTREAMS_API_KEY="your-api-key-here"
-```
+    ```
+    export SUBSTREAMS_API_KEY="your-api-key-here"
+    ```
 
 ### Run in `substreams-evm-tokens`
 
 1. Install the `wasm32-unknown-unknown` Target (if not installed)
-`rustup target add wasm32-unknown-unknown` 
+    ```
+    rustup target add wasm32-unknown-unknown
+    ```
 
 2. Build the WASM Module
-`cargo build --target wasm32-unknown-unknown --release`
+    ```
+    cargo build --target wasm32-unknown-unknown --release
+    ```
 
 This should generate the WASM file at:
 `./target/wasm32-unknown-unknown/release/evm_tokens.wasm`
 
 3. Setup `substreams-sink-sql` 
-`substreams-sink-sql setup $CLICKHOUSE_URL substreams.yaml`
+    ```
+    substreams-sink-sql setup $CLICKHOUSE_URL substreams.yaml
+    ```
 
 4. Run `substreams-sink-sql`
-```
-substreams-sink-sql run $CLICKHOUSE_URL substreams.yaml \
- --header "x-api-key: $SUBSTREAMS_API_KEY" 
- --undo-buffer-size=100 `
-```
+    ```
+    substreams-sink-sql run $CLICKHOUSE_URL substreams.yaml \
+    --header "x-api-key: $SUBSTREAMS_API_KEY" 
+    --undo-buffer-size=100 
+    ```
 
-The `undo-buffer-size` param might be required if you get the following error without it:
-```
-ERRO (sink-sql) new db loader: new psql loader: driver clickhouse does not support reorg handling. You must use set a non-zero undo-buffer-size
-```
+The `undo-buffer-size` param might be required if you get the following error without it.
+
+  
+    ERRO (sink-sql) new db loader: new psql loader: driver clickhouse does not support reorg handling. You must use set a non-zero undo-buffer-size
+
 
 Current `substreams.yaml` only pipes in the balance changes data into ClickHouse:
-```
-balance_changes: https://github.com/streamingfast/substreams-erc20-balance-changes/releases/download/v1.4.0/erc20-balance-changes-v1.4.0.spkg
-  # transfers: https://github.com/pinax-network/substreams-erc20-transfers/releases/download/v0.1.4/erc20Transfers-v0.1.4.spkg
-  # supply: https://github.com/pinax-network/substreams-erc20-supply/releases/download/v0.1.8/erc20-supply-v0.1.8.spkg
-  # contracts: https://github.com/pinax-network/substreams-erc20-contracts/releases/download/v0.1.7/erc20-contracts-v0.1.7.spkg
-```
 
-***** Original README copy ***********
+
+***** Original README ***********
 ## Quickstart
 
 ```
