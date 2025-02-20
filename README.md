@@ -104,7 +104,7 @@ The `undo-buffer-size` param might be required if you get the following error wi
 Current `substreams.yaml` only pipes in the balance changes data into ClickHouse:
 
 
-***** Original README ***********
+## *** Original README ***
 ## Quickstart
 
 ```
