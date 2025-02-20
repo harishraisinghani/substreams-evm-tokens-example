@@ -1,0 +1,24 @@
+[package]
+name = "evm-tokens"
+version = "0.0.0"
+description = "ERC-20"
+edition = "2021"
+authors = [
+    "Denis Carriere <denis@pinax.network>",
+    "Mathieu Lefebvre <mathieu@pinax.network>",
+]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+ethabi = "18.0"
+prost = "0.13"
+prost-types = "0.13"
+num-bigint = "0.4"
+substreams = "0.6"
+substreams-ethereum = "0.10"
+substreams-database-change = "2.0"
+
+[build-dependencies]
+substreams-ethereum = "0.10"

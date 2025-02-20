@@ -1,0 +1,49 @@
+specVersion: v0.1.0
+package:
+  name: evm_tokens
+  version: v0.1.0
+  url: https://github.com/pinax-network/substreams-evm-tokens
+
+imports:
+  sql: https://github.com/streamingfast/substreams-sink-sql/releases/download/protodefs-v1.0.7/substreams-sink-sql-protodefs-v1.0.7.spkg
+  database_change: https://github.com/streamingfast/substreams-sink-database-changes/releases/download/v2.0.0/substreams-database-change-v2.0.0.spkg
+  balance_changes: https://github.com/streamingfast/substreams-erc20-balance-changes/releases/download/v1.4.0/erc20-balance-changes-v1.4.0.spkg
+  # transfers: https://github.com/pinax-network/substreams-erc20-transfers/releases/download/v0.1.4/erc20Transfers-v0.1.4.spkg
+  # supply: https://github.com/pinax-network/substreams-erc20-supply/releases/download/v0.1.8/erc20-supply-v0.1.8.spkg
+  # contracts: https://github.com/pinax-network/substreams-erc20-contracts/releases/download/v0.1.7/erc20-contracts-v0.1.7.spkg
+binaries:
+  default:
+    type: wasm/rust-v1
+    file: ./target/wasm32-unknown-unknown/release/evm_tokens.wasm
+
+protobuf:
+  # files:
+  #   - eosio.token.proto
+  # importPaths:
+  #   - ./proto/v1
+  excludePaths:
+    - sf/substreams
+    - google
+
+modules:
+  - name: db_out
+    kind: map
+    inputs:
+      - source: sf.substreams.v1.Clock
+      - map: balance_changes:map_balance_changes
+      # - map: transfers:db_out
+      # - map: supply:db_out
+      # - map: contracts:db_out
+    output:
+      type: proto:sf.substreams.sink.database.v1.DatabaseChanges
+
+network: mainnet
+
+sink:
+  module: db_out
+  type: sf.substreams.sink.sql.v1.Service
+  config:
+    schema: "./schema.sql"
+    engine: clickhouse
+    postgraphile_frontend:
+      enabled: false
