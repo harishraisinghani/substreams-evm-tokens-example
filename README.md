@@ -11,7 +11,7 @@
 ```
 ./clickhouse client --host=127.0.0.1 --port=9000 --database=erc20_tokens_v1 < schema.sql
 ```
-4. Set the `CLICKHOUSE_URL` and `DSN` environment variables:
+4. Set the `CLICKHOUSE_URL` environment variable:
 ```
 export CLICKHOUSE_URL="clickhouse://default:@127.0.0.1:9000/erc20_tokens_v1"
 ```
